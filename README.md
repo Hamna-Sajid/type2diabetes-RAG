@@ -5,7 +5,7 @@
 **A Retrieval-Augmented Generation (RAG) based question-answering system for Type 2 Diabetes Management**
 
 ![Python](https://img.shields.io/badge/Python-3.10+-blue.svg)
-![Streamlit](https://img.shields.io/badge/Streamlit-1.28+-red.svg)
+![Chainlit](https://img.shields.io/badge/Chainlit-1.28+-red.svg)
 ![License](https://img.shields.io/badge/License-MIT-green.svg)
 
 [Overview](#overview) • [Architecture](#architecture) • [Project Structure](#project-structure) • [License](#license)

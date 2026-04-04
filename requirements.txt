@@ -1,0 +1,38 @@
+#ui
+chainlit
+python-dotenv
+requests
+pandas
+aiohttp
+pydantic
+
+# Core
+requests
+pyyaml
+tqdm
+numpy
+pandas
+
+# Text processing
+langchain
+langchain-community
+rank-bm25
+nltk
+
+# Embeddings & reranking
+sentence-transformers
+torch
+
+# Hugging Face
+huggingface-hub
+transformers
+
+# Vector DB
+pinecone-client>=3.0.0
+
+# Evaluation
+scikit-learn
+
+# PDF reading (optional, for future)
+pdfplumber
+PyPDF2

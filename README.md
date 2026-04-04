@@ -1,3 +1,12 @@
+---
+title: Type2diabetes
+emoji: 👀
+colorFrom: blue
+colorTo: indigo
+sdk: docker
+pinned: false
+license: mit
+---
 # Type 2 Diabetes Management RAG System
 
 <div align="center">

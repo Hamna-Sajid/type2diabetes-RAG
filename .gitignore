@@ -24,51 +24,13 @@ wheels/
 *.egg-info/
 .installed.cfg
 *.egg
+*.pyc
 
 # Virtual Environment
-venv/
-ENV/
+.venv/
 env/
 
-# IDE
-.vscode/
-.idea/
-*.swp
-*.swo
-*~
-.DS_Store
-
-# Data files
-*.pdf
-*.pkl
-*.pickle
-backend/data/type2diabetes_papers/*.pdf
-backend/data/processed_chunks.json
-backend/data/embeddings/
-*.npy
-*.npz
-
-# Logs
-*.log
-logs/
-
-# Jupyter
-.ipynb_checkpoints/
-*.ipynb
-
-# Streamlit
-.streamlit/
-.streamlit_cache/
-
-# OS
-.DS_Store
-Thumbs.db
-
-# Temporary files
-*.tmp
-*.temp
-*~
-
-# Large files (if any)
-*.tar.gz
-*.zip
+# Chainlit auto-generated files
+.chainlit/translations/
+.chainlit/.chainlit_cache/
+.chainlit/.llamaindex_cache/

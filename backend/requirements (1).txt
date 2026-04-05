@@ -1,0 +1,46 @@
+# ============================================================
+# Assignment 3 — RAG-based QA System
+# NLP with Deep Learning
+# ============================================================
+
+# Core RAG / Retrieval
+pinecone==6.0.2
+sentence-transformers==3.4.1
+rank-bm25==0.2.2
+
+# LangChain (text splitters for recursive chunking)
+langchain==0.3.21
+langchain-text-splitters==0.3.8
+
+# LLM / API (Groq — free inference, no credits needed)
+requests==2.32.3
+
+# Embeddings / ML
+numpy==1.26.4
+torch==2.5.1
+transformers==4.49.0
+
+# Data handling
+tqdm==4.67.1
+
+# Streamlit (for web interface deployment)
+streamlit==1.43.2
+
+# Serialization (BM25 index persistence)
+# pickle is stdlib — no install needed
+
+# ============================================================
+# Kaggle / Colab install command:
+# !pip install pinecone sentence-transformers rank-bm25 langchain tqdm requests -q
+#
+# Streamlit app deployment:
+# pip install -r requirements.txt
+#
+# LLM Backend: Groq API (https://console.groq.com) — completely free
+# Model used: llama-3.3-70b-versatile
+#
+# NOTE: HuggingFace Inference API was attempted initially with
+# mistralai/Mistral-7B-Instruct-v0.3, but was deprecated in
+# July 2025. Sambanova provider returned 402 (credits depleted).
+# Groq was adopted as the final free LLM backend.
+# ============================================================

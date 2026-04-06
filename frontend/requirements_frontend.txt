@@ -1,0 +1,16 @@
+# UI Framework
+chainlit>=1.2.0
+
+# HTTP & async
+aiohttp>=3.9.0
+httpx>=0.27.0
+requests>=2.31.0
+
+# Configuration
+python-dotenv>=1.0.0
+pydantic>=2.6.0
+
+# Utilities
+pandas>=2.0.0
+numpy>=1.26.0
+tqdm>=4.66.0

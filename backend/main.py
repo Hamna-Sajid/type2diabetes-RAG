@@ -252,3 +252,8 @@ def _build_bm25(chunks: list[dict]):
     chunk_ids  = [c["chunk_id"] for c in chunks]
     chunk_lookup = {c["chunk_id"]: c for c in chunks}
     return bm25, chunk_ids, chunk_lookup
+
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=7860)

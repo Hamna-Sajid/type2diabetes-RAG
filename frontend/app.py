@@ -3,40 +3,37 @@ Type 2 Diabetes RAG - Chainlit Frontend
 
 A conversational AI system that answers questions about Type 2 Diabetes
 using Retrieval-Augmented Generation (RAG) with advanced retrieval strategies.
+
+This version connects to a FastAPI backend for all operations:
+  - Document retrieval
+  - Answer generation
+  - Quality evaluation (faithfulness, relevancy)
 """
 
 import os
-import json
 import asyncio
-from typing import Optional, List, Dict, Any
+from typing import Optional, List, Dict
 
 # Chainlit imports
 import chainlit as cl
 
-# Other imports
-import aiohttp
+# HTTP imports
 import httpx
-from chainlit.types import AskActionResponse
 
-import aiohttp
 from config import (
-    PINECONE_API_KEY,
-    PINECONE_INDEX_NAME,
-    HF_TOKEN,
-    HF_MODEL,
+    BACKEND_URL,
     APP_TITLE,
     APP_DESCRIPTION,
     EXAMPLE_QUERIES,
     USE_HYBRID_SEARCH,
-    USE_RERANKING,
     EVALUATE_FAITHFULNESS,
     EVALUATE_RELEVANCY,
 )
 
-# ============= GLOBAL VARIABLES =============
-# These will be initialized when the app starts
-retriever = None
-llm_client = None
+print(f"🚀 Frontend starting")
+print(f"   Backend URL: {BACKEND_URL}")
+print(f"   Hybrid search: {USE_HYBRID_SEARCH}")
+print(f"   Evaluation: {EVALUATE_FAITHFULNESS or EVALUATE_RELEVANCY}")
 
 # ============= CHAINLIT LIFECYCLE HOOKS =============
 
@@ -173,163 +170,90 @@ Error details: {str(e)}
         await cl.Message(content=error_content).send()
 
 
+# ============= BACKEND COMMUNICATION =============
+
+async def call_backend(query: str) -> dict:
+    """
+    Call the FastAPI backend /query endpoint.
+    Returns the complete response with answer, chunks, and scores.
+    """
+    
+    if not BACKEND_URL:
+        raise Exception("❌ BACKEND_URL not configured. Set it in your HF Spaces secrets.")
+    
+    payload = {
+        "query": query,
+        "mode": "hybrid" if USE_HYBRID_SEARCH else "semantic",
+        "top_k": 5,
+        "evaluate": EVALUATE_FAITHFULNESS or EVALUATE_RELEVANCY
+    }
+    
+    try:
+        async with httpx.AsyncClient(timeout=120.0) as client:
+            url = f"{BACKEND_URL}/query"
+            print(f"   POST {url}")
+            
+            response = await client.post(
+                url,
+                json=payload,
+                headers={"Content-Type": "application/json"}
+            )
+            
+            if response.status_code != 200:
+                error_text = response.text[:500]
+                raise Exception(f"Backend returned {response.status_code}: {error_text}")
+            
+            data = response.json()
+            return data
+    
+    except httpx.ConnectError as e:
+        raise Exception(
+            f"❌ Could not connect to backend at {BACKEND_URL}\n"
+            f"Make sure the backend is deployed and ready.\n"
+            f"Error: {str(e)}"
+        )
+    except httpx.TimeoutException:
+        raise Exception(
+            f"❌ Backend request timed out. It may still be loading.\n"
+            f"Try again in a moment."
+        )
+    except Exception as e:
+        raise Exception(f"❌ Backend error: {str(e)}")
+
+
 # ============= RETRIEVAL FUNCTIONS =============
 
 async def retrieve_documents(query: str) -> tuple:
-    """
-    Retrieve relevant documents from Pinecone.
-    FOR NOW: Returns placeholder data.
-    LATER: Will integrate with real Pinecone + BM25.
-    """
-    
-    try:
-        # PLACEHOLDER: Return dummy context and sources
-        # This will be replaced in Part 3 with real Pinecone calls
-        
-        context = f"""
-Type 2 Diabetes is a chronic metabolic disorder characterized by hyperglycemia 
-(elevated blood glucose). It accounts for approximately 90-95% of all diabetes cases.
-
-Management includes:
-1. Lifestyle modifications (diet, exercise, weight management)
-2. Pharmacological interventions (metformin, GLP-1 agonists, SGLT2 inhibitors)
-3. Regular monitoring and complications screening
-
-Early intervention significantly reduces long-term complications.
-        """
-        
-        sources = [
-            {
-                "title": "Type 2 Diabetes Mellitus: Epidemiology, Pathophysiology, and Management",
-                "authors": "Smith J, Jones K, Brown L",
-                "year": 2022,
-                "doi": "10.1234/example-doi",
-                "chunk_preview": "Type 2 Diabetes is a chronic metabolic disorder characterized by hyperglycemia...",
-                "relevance_score": 0.95
-            },
-            {
-                "title": "Glycemic Control and Cardiovascular Outcomes in Type 2 Diabetes",
-                "authors": "Green R, White T, Black D",
-                "year": 2023,
-                "doi": "10.5678/example-doi",
-                "chunk_preview": "Achieving optimal glycemic control is essential for preventing...",
-                "relevance_score": 0.87
-            },
-            {
-                "title": "GLP-1 Receptor Agonists: Benefits and Mechanisms",
-                "authors": "Lee S, Park H",
-                "year": 2023,
-                "doi": "10.9012/example-doi",
-                "chunk_preview": "GLP-1 receptor agonists provide both glycemic control and...",
-                "relevance_score": 0.82
-            },
-        ]
-        
-        return context, sources
-        
-    except Exception as e:
-        print(f"Error in retrieve_documents: {e}")
-        raise Exception("Document retrieval failed")
+    """Kept for backwards compatibility - now calls backend."""
+    backend_response = await call_backend(query)
+    return backend_response, backend_response.get('chunks', [])
 
 
-async def generate_answer(query: str, context: str) -> str:
-    """
-    Generate answer using LLM.
-    FOR NOW: Returns placeholder answer.
-    LATER: Will call HF Inference API with real context.
-    """
-    
-    try:
-        # PLACEHOLDER: Return a medical-style answer
-        # This will be replaced in Part 3 with real HF API calls
-        
-        answer = f"""
-Based on current medical research, here's what you need to know:
-
-## Understanding Type 2 Diabetes
-
-Type 2 Diabetes is a progressive metabolic disorder characterized by insulin resistance 
-and eventual beta-cell dysfunction. It affects how your body uses blood glucose (sugar).
-
-## Key Management Strategies
-
-### 1. Lifestyle Modifications
-- **Diet**: Focus on balanced macronutrients, reduced refined carbohydrates
-- **Exercise**: 150+ minutes moderate-intensity activity per week
-- **Weight**: 5-10% reduction can significantly improve insulin sensitivity
-
-### 2. Pharmacological Treatment
-- **Metformin**: First-line agent, improves insulin sensitivity
-- **GLP-1 Agonists**: Cardiovascular and renal protective effects
-- **SGLT2 Inhibitors**: Cardiac and kidney benefits
-- **Sulfonylureas**: Direct insulin secretion stimulation
-
-### 3. Monitoring
-- **HbA1c**: Quarterly monitoring (target <7% for most patients)
-- **Fasting glucose**: Daily monitoring if on insulin
-- **Annual screening**: For complications (retinopathy, nephropathy, neuropathy)
-
-## Prevention of Complications
-
-Early detection and aggressive management can prevent serious complications including:
-- Cardiovascular disease (heart attacks, strokes)
-- Diabetic nephropathy (kidney disease)
-- Diabetic retinopathy (vision loss)
-- Diabetic neuropathy (nerve damage)
-
-## Important Note
-
-This information is for educational purposes. Always consult with a healthcare 
-professional for personalized medical advice.
-        """
-        
-        return answer.strip()
-        
-    except Exception as e:
-        print(f"Error in generate_answer: {e}")
-        raise Exception("Answer generation failed")
+async def generate_answer(query: str, backend_response: dict) -> str:
+    """Extract answer from backend response."""
+    answer = backend_response.get('answer', 'No answer generated')
+    print(f"  ✓ Got answer from backend ({len(answer)} chars)")
+    return answer
 
 
-async def evaluate_faithfulness(answer: str, context: str) -> float:
-    """
-    Evaluate faithfulness of answer against context.
-    FOR NOW: Returns placeholder score.
-    LATER: Will implement claim extraction and verification.
-    """
-    
-    try:
-        # PLACEHOLDER: Return a realistic faithfulness score
-        # This will be replaced in Part 3 with real LLM evaluation
-        
-        await asyncio.sleep(0.3)  # Simulate processing
-        
-        # For now, return a good score (we're using placeholder answers)
-        return 0.92
-        
-    except Exception as e:
-        print(f"Error in evaluate_faithfulness: {e}")
-        return None
+async def evaluate_faithfulness(answer: str, backend_response: dict) -> Optional[float]:
+    """Extract faithfulness score from backend response."""
+    evaluation = backend_response.get('evaluation', {})
+    if evaluation:
+        score = evaluation.get('faithfulness_score')
+        print(f"  ✓ Faithfulness score: {score}")
+        return score
+    return None
 
 
-async def evaluate_relevancy(answer: str, query: str) -> float:
-    """
-    Evaluate relevancy of answer to query.
-    FOR NOW: Returns placeholder score.
-    LATER: Will use similarity metrics.
-    """
-    
-    try:
-        # PLACEHOLDER: Return a realistic relevancy score
-        # This will be replaced in Part 3 with cosine similarity
-        
-        await asyncio.sleep(0.3)  # Simulate processing
-        
-        # For now, return a good score
-        return 0.88
-        
-    except Exception as e:
-        print(f"Error in evaluate_relevancy: {e}")
-        return None
+async def evaluate_relevancy(answer: str, backend_response: dict) -> Optional[float]:
+    """Extract relevancy score from backend response."""
+    evaluation = backend_response.get('evaluation', {})
+    if evaluation:
+        score = evaluation.get('relevancy_score')
+        print(f"  ✓ Relevancy score: {score}")
+        return score
+    return None
 
 
 # ============= DISPLAY FUNCTIONS =============

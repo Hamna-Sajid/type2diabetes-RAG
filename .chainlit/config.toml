@@ -102,7 +102,7 @@ reaction_on_message_received = false
 name = "Diabetes Research Assistant"
 
 # Description of the assistant. This is used for HTML tags.
-description = "Cross-repo code reasoning · numpy · scipy · pandas · scikit-learn · pytorch · transformers"
+description = "Type 2 Diabetes RAG - Medical research synthesis via advanced retrieval augmented generation"
 
 # default_theme = "dark"
 

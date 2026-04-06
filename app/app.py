@@ -191,3 +191,6 @@ async def on_message(msg: cl.Message):
         content=answer + meta,
         elements=elements,
     ).send()
+
+# Log when app module finishes loading
+log.info("=== App module fully loaded - UI should initialize ===")

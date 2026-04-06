@@ -12,7 +12,7 @@ This version connects to a FastAPI backend for all operations:
 
 import os
 import asyncio
-from typing import Optional, List, Dict
+from typing import Optional, List, Dict, Any
 
 # Chainlit imports
 import chainlit as cl
@@ -26,6 +26,7 @@ from config import (
     APP_DESCRIPTION,
     EXAMPLE_QUERIES,
     USE_HYBRID_SEARCH,
+    USE_RERANKING,
     EVALUATE_FAITHFULNESS,
     EVALUATE_RELEVANCY,
 )
@@ -130,7 +131,7 @@ async def main(message: cl.Message):
                 faithfulness_score = await evaluate_faithfulness(answer, retrieved_context)
             
             if EVALUATE_RELEVANCY:
-                relevancy_score = await evaluate_relevancy(answer, user_query)
+                relevancy_score = await evaluate_relevancy(answer, retrieved_context)
             
             print(f"  Faithfulness: {faithfulness_score}, Relevancy: {relevancy_score}")
         

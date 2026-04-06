@@ -1,0 +1,16 @@
+<svg width="450" height="120" viewBox="0 0 450 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <g opacity="0.95">
+    <circle cx="65" cy="65" r="45" stroke="#CCD5D1" stroke-width="1.5" stroke-dasharray="3 3"/>
+    
+    <path d="M40 30C50 30 60 40 65 65M40 30L45 35" stroke="hsl(38, 80%, 55%)" stroke-width="3" stroke-linecap="round"/>
+    <path d="M90 35C80 35 70 45 65 65M90 35L85 40" stroke="hsl(38, 80%, 55%)" stroke-width="3" stroke-linecap="round"/>
+    <path d="M65 65C60 90 50 100 35 100M35 100L40 95" stroke="hsl(38, 80%, 55%)" stroke-width="3" stroke-linecap="round"/>
+    
+    <circle cx="65" cy="65" r="8" fill="hsl(38, 80%, 55%)"/>
+  </g>
+
+  <text x="135" y="82" font-family="'DM Serif Display', serif" font-size="52" letter-spacing="-0.01em" fill="hsl(165, 25%, 12%)">Diabetes RAG</text>
+  
+  <rect x="137" y="92" width="280" height="1" fill="hsl(165, 25%, 12%)" fill-opacity="0.2" />
+</svg>
+

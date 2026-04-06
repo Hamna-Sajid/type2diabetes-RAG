@@ -1,0 +1,57 @@
+{
+    "custom_fonts": [
+        "https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=DM+Serif+Display&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap"
+    ],
+    "variables": {
+        "light": {
+            "--font-sans": "'Bricolage Grotesque', 'Inter', sans-serif",
+            "--font-heading": "'DM Serif Display', serif",
+            "--font-mono": "'JetBrains Mono', monospace",
+            "--background": "210 30% 96%",
+            "--foreground": "222 47% 11%",
+            "--card": "210 40% 98%",
+            "--card-foreground": "222 47% 11%",
+            "--popover": "210 40% 98%",
+            "--popover-foreground": "222 47% 11%",
+            "--primary": "221 83% 53%",
+            "--primary-foreground": "210 30% 96%",
+            "--secondary": "210 30% 92%",
+            "--secondary-foreground": "222 47% 11%",
+            "--muted": "210 30% 92%",
+            "--muted-foreground": "215 16% 47%",
+            "--accent": "199 89% 48%",
+            "--accent-foreground": "222 47% 11%",
+            "--destructive": "0 84% 60%",
+            "--destructive-foreground": "210 30% 96%",
+            "--border": "214 32% 88%",
+            "--input": "214 32% 88%",
+            "--ring": "221 83% 53%",
+            "--radius": "0.5rem"
+        },
+        "dark": {
+            "--font-sans": "'Bricolage Grotesque', 'Inter', sans-serif",
+            "--font-heading": "'DM Serif Display', serif",
+            "--font-mono": "'JetBrains Mono', monospace",
+            "--background": "222 47% 4%",
+            "--foreground": "210 30% 94%",
+            "--card": "222 47% 7%",
+            "--card-foreground": "210 30% 94%",
+            "--popover": "222 47% 5%",
+            "--popover-foreground": "210 30% 94%",
+            "--primary": "217 91% 60%",
+            "--primary-foreground": "222 47% 4%",
+            "--secondary": "222 47% 12%",
+            "--secondary-foreground": "210 30% 94%",
+            "--muted": "222 47% 12%",
+            "--muted-foreground": "215 20% 65%",
+            "--accent": "199 89% 48% / 0.2",
+            "--accent-foreground": "199 89% 70%",
+            "--destructive": "0 62% 45%",
+            "--destructive-foreground": "210 30% 94%",
+            "--border": "222 47% 15%",
+            "--input": "222 47% 15%",
+            "--ring": "221 83% 53%",
+            "--radius": "0.5rem"
+        }
+    }
+}

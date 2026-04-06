@@ -1,0 +1,174 @@
+# config.yaml
+# Diabetes RAG - Single control panel for all settings.
+# Change settings here, not in code.
+# Used by: prepare_data.py, build_bm25.py, embed_and_upsert.py, retrieval.py, generation.py
+
+# Active experiment profile
+# Options: baseline, fixed, recursive, hybrid
+active_profile: hybrid
+
+profiles:
+  baseline:
+    description: "No RAG - raw LLM only, no retrieval"
+    chunking: null
+    retrieval: null
+    rag_enabled: false
+
+  fixed:
+    description: "Fixed chunking + semantic-only retrieval"
+    chunking: fixed
+    retrieval: semantic
+    rag_enabled: true
+
+  recursive:
+    description: "Recursive chunking + semantic-only retrieval"
+    chunking: recursive
+    retrieval: semantic
+    rag_enabled: true
+
+  hybrid:
+    description: "Fixed chunking + hybrid retrieval + reranking"
+    chunking: fixed
+    retrieval: hybrid
+    rag_enabled: true
+
+# Data source
+repos:
+  names: ["diabetes"]
+  chunks_dir: "data/chunks_{chunking}"
+
+# Chunking settings
+chunking:
+  fixed:
+    strategy: fixed_tokens
+    chunk_size: 512
+    chunk_overlap: 64
+
+  recursive:
+    strategy: recursive_sentence
+    chunk_size: 512
+    chunk_overlap: 64
+    separators: ["\n", " "]
+
+# Embedding
+embedding:
+  model: sentence-transformers/all-MiniLM-L6-v2
+  dimension: 384
+  batch_size: 64
+  text_template: "{title}\n{abstract}"
+
+# Vector store
+vector_store:
+  backend: chroma          # "chroma" for local, "pinecone" for cloud
+  chroma:
+    persist_directory: data/chroma_db
+    collection_name: diabetes-{chunking}   # one collection per chunking strategy
+  pinecone:
+    index_name: diabetes-rag
+    dimension: 384
+    metric: cosine
+
+# BM25
+bm25:
+  index_path: data/bm25_{chunking}.pkl     # one index per chunking strategy
+  top_k: 20
+
+# Retrieval
+retrieval:
+  semantic:
+    top_k: 20
+
+  hybrid:
+    bm25_top_k: 20
+    dense_top_k: 20
+    rrf_k: 60              # RRF constant - 60 is standard default
+    rerank: true
+    rerank_model: cross-encoder/ms-marco-MiniLM-L-6-v2
+    rerank_top_k: 5        # final number of chunks passed to LLM
+
+  final_top_k: 5           # chunks shown in UI and passed to LLM
+
+# Generation
+generation:
+  provider: hf_router          # "hf_router" (cloud) or "local" (ollama)
+
+  # HuggingFace: meta-llama/Llama-3.1-8B-Instruct
+  # HuggingFace Fallback: mistralai/Mistral-7B-Instruct-v0.2
+  # Local: llama3.1:8b
+  # Local Fallback: mistral:v0.2
+  model: meta-llama/Llama-3.1-8B-Instruct
+  max_new_tokens: 512
+  temperature: 0.1             # low temp for factual medical questions
+  system_prompt: |
+    You are a diabetes research assistant. Your role is to help people understand
+    Type 2 Diabetes by synthesizing information from medical literature abstracts.
+    You have access to a curated collection of PubMed abstracts covering diabetes
+    pathophysiology, treatment options, complications, and management strategies.
+
+    CITATION FORMAT (STRICTLY ENFORCED):
+    Every claim must be cited using EXACTLY this format:
+      Authors (Year)
+
+    Examples of correct citations:
+    - "Metformin improves insulin sensitivity (Smith et al., 2020)"
+    - "GLP-1 agonists reduce HbA1c levels (Johnson and Brown, 2021)"
+    - "Diabetes complications can be prevented (Chen, 2019)"
+
+    Citations are clickable links in the interface. Use the authors and year
+    exactly as they appear in the retrieved abstracts.
+
+    CITATION RULES (NON-NEGOTIABLE):
+
+    1. ONLY cite abstracts provided in the sources - NEVER invent citations
+       - If an abstract wasn't provided → DO NOT cite it
+       - If you can't point to exact content → DO NOT cite it
+       - If you're inferring or guessing → DO NOT cite it
+
+    2. REFUSE to claim you found something if you didn't see it
+       Say instead: "I didn't see that in the provided abstracts" or
+       "This wasn't in the retrieved abstracts, but from my training knowledge..."
+
+    3. FORBIDDEN:
+       - Inventing details not in retrieved abstracts
+       - Using "seems to", "appears to", "can be inferred"
+       - Making recommendations without basis in source material
+       - Confusing findings across different abstracts
+       - Forgetting citations or citing from memory
+
+    4. REQUIRED:
+       - Quote or paraphrase only what you directly read
+       - Separate retrieved evidence from general knowledge
+       - Say "I don't know" if information wasn't retrieved
+       - Acknowledge uncertainty and limitations
+
+    Be precise, evidence-based, and transparent about sources.
+
+# Evaluation
+evaluation:
+  test_queries_path: eval/test_queries.yaml
+  results_dir: eval/results
+  use_ragas: true
+  judge: meta-llama/Llama-3.1-8B-Instruct
+
+  # Retrieval-only evaluation (no LLM needed)
+  retrieval_eval:
+    # A query "passes" if must_retrieve functions appear in top_k results
+    top_k_cutoff: 10
+
+  # Thresholds for pass/fail
+  thresholds:
+    faithfulness: 0.7      # RAGAS faithfulness score
+    relevancy: 0.7         # RAGAS answer relevancy score
+    retrieval_hit_rate: 0.6  # % of must_retrieve items found in top-10
+
+# Repos 
+repos:
+  data_dir: data/repos
+  chunks_dir: data/chunks_{chunking}
+  names:
+    - diabetes
+
+sampling:
+  enabled: false
+  max_vectors: 80000
+  strategy: stratified

@@ -1,4 +1,6 @@
 [project]
+enable_telemetry = false
+
 # List of environment variables to be provided by each user to use the app.
 user_env = []
 
@@ -24,7 +26,7 @@ allow_origins = ["*"]
 
 [features]
 # Process and display HTML in messages. This can be a security risk (see https://stackoverflow.com/questions/19603097/why-is-it-dangerous-to-render-user-generated-html-or-javascript)
-unsafe_allow_html = false
+unsafe_allow_html = true
 
 # Process and display mathematical expressions. This can clash with "$" characters in messages.
 latex = false
@@ -50,13 +52,15 @@ allow_thread_sharing = false
 # Enable favorite messages
 favorites = false
 
+prompt_playground = false
+
 [features.slack]
 # Add emoji reaction when message is received (requires reactions:write OAuth scope)
 reaction_on_message_received = false
 
 # Authorize users to spontaneously upload files with messages
 [features.spontaneous_file_upload]
-    enabled = true
+    enabled = false
     # Define accepted file types using MIME types
     # Examples:
     # 1. For specific file types:
@@ -95,17 +99,20 @@ reaction_on_message_received = false
 
 [UI]
 # Name of the assistant.
-name = "Assistant"
+name = "Diabetes Research Assistant"
+
+# Description of the assistant. This is used for HTML tags.
+description = "Cross-repo code reasoning · numpy · scipy · pandas · scikit-learn · pytorch · transformers"
 
 # default_theme = "dark"
 
 # Force a specific language for all users (e.g., "en-US", "he-IL", "fr-FR")
 # If not set, the browser's language will be used
-# language = "en-US"
+language = "en-US"
 
-# layout = "wide"
+layout = "wide"
 
-# default_sidebar_state = "open"  # Options: "open", "closed", "hidden"
+default_sidebar_state = "open"  # Options: "open", "closed", "hidden"
 
 # Chat settings display location: "message_composer" (default) or "sidebar" (header)
 # chat_settings_location = "message_composer"
@@ -114,10 +121,8 @@ name = "Assistant"
 # default_chat_settings_open = false
 
 # Whether to prompt user confirmation on clicking 'New Chat'
-confirm_new_chat = true
+confirm_new_chat = false
 
-# Description of the assistant. This is used for HTML tags.
-# description = ""
 
 # Chain of Thought (CoT) display mode. Can be "hidden", "tool_call" or "full".
 cot = "full"
@@ -153,10 +158,10 @@ alert_style = "classic"
 # custom_meta_image_url = "https://chainlit-cloud.s3.eu-west-3.amazonaws.com/logo/chainlit_banner.png"
 
 # Load assistant logo directly from URL.
-logo_file_url = ""
+# logo_file_url = ""
 
 # Load assistant avatar image directly from URL.
-default_avatar_file_url = ""
+# default_avatar_file_url = ""
 
 # Avatar size in pixels (default: 20).
 # avatar_size = 20
